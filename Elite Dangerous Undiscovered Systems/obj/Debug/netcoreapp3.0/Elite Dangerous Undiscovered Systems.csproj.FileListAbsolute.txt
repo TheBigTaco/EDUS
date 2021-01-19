@@ -1,0 +1,41 @@
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\appsettings.Development.json
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\appsettings.json
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\Properties\launchSettings.json
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\Elite Dangerous Undiscovered Systems.exe
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\obj\Debug\netcoreapp3.0\Elite Dangerous Undiscovered Systems.csprojAssemblyReference.cache
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\obj\Debug\netcoreapp3.0\staticwebassets\Elite Dangerous Undiscovered Systems.StaticWebAssets.Manifest.cache
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\obj\Debug\netcoreapp3.0\staticwebassets\Elite Dangerous Undiscovered Systems.StaticWebAssets.xml
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\obj\Debug\netcoreapp3.0\Elite Dangerous Undiscovered Systems.AssemblyInfoInputs.cache
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\obj\Debug\netcoreapp3.0\Elite Dangerous Undiscovered Systems.AssemblyInfo.cs
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\obj\Debug\netcoreapp3.0\Elite Dangerous Undiscovered Systems.RazorTargetAssemblyInfo.cache
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\Elite Dangerous Undiscovered Systems.deps.json
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\Elite Dangerous Undiscovered Systems.runtimeconfig.json
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\Elite Dangerous Undiscovered Systems.runtimeconfig.dev.json
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\Elite Dangerous Undiscovered Systems.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\Elite Dangerous Undiscovered Systems.pdb
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\Elite Dangerous Undiscovered Systems.Views.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\obj\Debug\netcoreapp3.0\Elite Dangerous Undiscovered Systems.csproj.CopyComplete
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\obj\Debug\netcoreapp3.0\Elite Dangerous Undiscovered Systems.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\obj\Debug\netcoreapp3.0\Elite Dangerous Undiscovered Systems.pdb
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\Microsoft.Win32.Registry.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\System.Data.SqlClient.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\System.Diagnostics.DiagnosticSource.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\System.Security.AccessControl.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\System.Security.Principal.Windows.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\System.Text.Encoding.CodePages.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\runtimes\unix\lib\netstandard2.0\Microsoft.Win32.Registry.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\runtimes\win\lib\netstandard2.0\Microsoft.Win32.Registry.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\runtimes\win-arm64\native\sni.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\runtimes\win-x64\native\sni.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\runtimes\win-x86\native\sni.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\runtimes\win\lib\netcoreapp2.0\System.Security.AccessControl.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\runtimes\unix\lib\netcoreapp2.1\System.Security.Principal.Windows.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\runtimes\win\lib\netcoreapp2.1\System.Security.Principal.Windows.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\runtimes\win\lib\netcoreapp2.0\System.Text.Encoding.CodePages.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\NightlyDumps\systemsWithCoordinates_test.json
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\Newtonsoft.Json.dll
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\obj\Debug\netcoreapp3.0\Elite Dangerous Undiscovered Systems.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\NightlyDumps\systemsWithCoordinates.json
