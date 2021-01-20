@@ -33,7 +33,11 @@ namespace EDUS_Unit_Test
             JsonParse.LoadNightlyStarsFromJson(fileName);
 
             // Assert
-            Assert.IsTrue(DataRefreshTests.SelectSystemsName(1) == "testSystem" && DataRefreshTests.SelectSystemsName(2312) == "testSystem2" && DataRefreshTests.SelectSystemsCount() == 2);
+            Assert.IsTrue(DataRefreshTests.SelectStarsName(1) == "testSystem" && DataRefreshTests.SelectStarsName(2312) == "testSystem2");
+            List<int> ids = new List<int>();
+            ids.Add(1);
+            ids.Add(2312);
+            DataRefresh.DeleteStars(ids);
         }
 
         [TestMethod]
@@ -47,8 +51,12 @@ namespace EDUS_Unit_Test
             JsonParse.LoadAllStarsFromJson(fileName);
 
             // Assert
-            Assert.IsTrue(DataRefreshTests.SelectSystemsCount() > 50000000);
-            //Assert.IsTrue(DataRefreshTests.SelectSystemsCount() == 2);
+            Assert.IsTrue(DataRefreshTests.SelectStarsCount() > 50000000);
+            //Assert.IsTrue(DataRefreshTests.SelectStarsName(1) == "testSystem" && DataRefreshTests.SelectStarsName(2312) == "testSystem2");
+            //List<int> ids = new List<int>();
+            //ids.Add(1);
+            //ids.Add(2312);
+            //DataRefresh.DeleteStars(ids);
         }
     }
 }

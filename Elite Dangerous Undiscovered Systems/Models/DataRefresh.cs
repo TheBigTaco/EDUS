@@ -13,45 +13,10 @@ namespace EDUS.Models
         static private string connectionString = "Data Source=THEMASSIVETACO;Initial Catalog=Elite_Dangerous;Integrated Security=True";
 
         /// <summary>
-        /// Fully refresh all stars in database from systemsWithCoordinates json
+        /// Insert and update for nightly dumps of new stars or for full refresh.
         /// </summary>
-        /// <param name="stars"></param>
-        public static void FullRefresh(Dictionary<int,Tuple<string, double, double, double, DateTime>> stars)
-        {
-            // Insert into staging first for merge statement
-            InsertIntoStaging(stars);
-
-            // Merge statement to merge staging and production tables
-            string mergeStatement = @"
-USE Elite_Dangerous;
-
-MERGE Discovered_Systems AS t
-USING Discovered_Systems_Staging AS s
-ON t.id = s.id
-WHEN MATCHED AND t.name != s.name OR t.x_coor != s.x_coor OR t.y_coor != s.y_coor OR t.z_coor != s.z_coor OR t.date_discovered != s.date_discovered
-	THEN UPDATE SET 
-	t.id = s.id
-	, t.name = s.name
-	, t.x_coor = s.x_coor
-	, t.y_coor = s.y_coor
-	, t.z_coor = s.z_coor
-	, t.date_discovered = s.date_discovered
-WHEN NOT MATCHED
-	THEN INSERT VALUES (s.id, s.name, s.x_coor, s.y_coor, s.z_coor, s.date_discovered)
-WHEN NOT MATCHED BY SOURCE
-	THEN DELETE;
-
-TRUNCATE TABLE Discovered_Systems_Staging;";
-
-            // Execute merge
-            ExecuteQuery(mergeStatement);
-        }
-
-        /// <summary>
-        /// Insert and update for nightly dumps of new stars.
-        /// </summary>
-        /// <param name="stars"></param>
-        public static void InsertUpdateStars(Dictionary<int, Tuple<string, double, double, double, DateTime>> stars)
+        /// <param name="stars">List<Star> to be inserted or updated</Star></param>
+        public static void InsertUpdateStars(List<Star> stars)
         {
 
             InsertIntoStaging(stars);
@@ -103,7 +68,7 @@ TRUNCATE TABLE Discovered_Systems_Staging;";
         /// Loop through dictionary to add stars into insert statement to be inserted into staging table
         /// </summary>
         /// <param name="stars">Dictionary of id, tuple keyvalue pair. Tuple contains name, coords, and date discovered.</param>
-        public static void InsertIntoStaging(Dictionary<int, Tuple<string, double, double, double, DateTime>> stars)
+        public static void InsertIntoStaging(List<Star> stars)
         {
             if (stars.Count() > 0)
             {
@@ -113,10 +78,10 @@ USE Elite_Dangerous;
 
 INSERT INTO Discovered_Systems_Staging (id, name, x_coor, y_coor, z_coor, date_discovered)
 VALUES ";
-                foreach (KeyValuePair<int, Tuple<string, double, double, double, DateTime>> star in stars)
+                foreach (Star star in stars)
                 {
                     // Add in values for every system
-                    stagingInsertStatement += @$"({star.Key}, '{star.Value.Item1}', {star.Value.Item2}, {star.Value.Item3}, {star.Value.Item4}, '{star.Value.Item5}'),";
+                    stagingInsertStatement += @$"({star.id}, '{star.name}', {star.coords["x"]}, {star.coords["y"]}, {star.coords["z"]}, '{star.date}'),";
                 }
                 // Remove trailing comma on final value set
                 stagingInsertStatement = stagingInsertStatement.Remove(stagingInsertStatement.Length - 1);

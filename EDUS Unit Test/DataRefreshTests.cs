@@ -10,7 +10,6 @@ namespace EDUS_Unit_Test
     [TestClass]
     public class DataRefreshTests
     {
-        public Dictionary<int, Tuple<string, double, double, double, DateTime>> systems = new Dictionary<int, Tuple<string, double, double, double, DateTime>>();
         [TestMethod]
         public void ConnectionCanOpenAndClose_ConnectionGet_ConnectionOpensThenCloses()
         {
@@ -31,134 +30,81 @@ namespace EDUS_Unit_Test
         }
 
         [TestMethod]
-        public void FullRefreshSingleInsertSucceeds_MergeSingleWithInsert_OneRowInserted()
+        public void InsertUpdateInsertOneNew_InsertNewStar_OneStarAdded()
         {
             // Arrange
-            systems.Clear();
-            Tuple<string, double, double, double, DateTime> systemDetails = new Tuple<string, double, double, double, DateTime>("testSystem", 1.2, 1, 0.2, DateTime.Now);
-            systems.Add(1, systemDetails);
+            List<Star> stars = new List<Star>();
+            Star star1 = new Star();
+            star1.id = 2;
+            star1.name = "testSystem2";
+            Dictionary<string, double> coords = new Dictionary<string, double>();
+            coords.Add("x", 1.2);
+            coords.Add("y", 1);
+            coords.Add("z", 0.2);
+            star1.coords = coords;
+            star1.date = DateTime.Now;
+
+            stars.Add(star1);
 
             // Act
-            DataRefresh.FullRefresh(systems);
+            DataRefresh.InsertUpdateStars(stars);
 
             // Assert
-            Assert.IsTrue(SelectSystemsCount() == 1);
-            FullRefreshSingleUpdateSucceeds_MergeSingleWithUpdate_OneRowUpdated();
+            Assert.IsTrue(SelectStarsName(2) == "testSystem2");
+            InsertUpdateInsertTwoUpdateOne_UpdateStarAndAddNewStar_TwoRowsAddedOneUpdated();
         }
 
         [TestMethod]
-        public void FullRefreshSingleUpdateSucceeds_MergeSingleWithUpdate_OneRowUpdated()
+        public void InsertUpdateInsertTwoUpdateOne_UpdateStarAndAddNewStar_TwoRowsAddedOneUpdated()
         {
             // Arrange
-            systems.Clear();
-            Tuple<string, double, double, double, DateTime> systemDetails = new Tuple<string, double, double, double, DateTime>("testSystemUpdated", 1.2, 1, 0.2, DateTime.Now);
-            systems.Add(1, systemDetails);
+            List<Star> stars = new List<Star>();
+            Star star1 = new Star();
+            star1.id = 2;
+            star1.name = "testSystem2Updated";
+            Dictionary<string, double> coords = new Dictionary<string, double>();
+            coords.Add("x", 1.2);
+            coords.Add("y", 1);
+            coords.Add("z", 0.2);
+            star1.coords = coords;
+            star1.date = DateTime.Now;
+
+            Star star2 = new Star();
+            star2.id = 4;
+            star2.name = "testSystem4";
+            Dictionary<string, double> coords2 = new Dictionary<string, double>();
+            coords2.Add("x", 1.2);
+            coords2.Add("y", 1);
+            coords2.Add("z", 0.2);
+            star2.coords = coords;
+            star2.date = DateTime.Now;
+
+            Star star3 = new Star();
+            star3.id = 5;
+            star3.name = "testSystem5";
+            Dictionary<string, double> coords3 = new Dictionary<string, double>();
+            coords3.Add("x", 1.2);
+            coords3.Add("y", 1);
+            coords3.Add("z", 0.2);
+            star3.coords = coords;
+            star3.date = DateTime.Now;
+
+            stars.Add(star1);
+            stars.Add(star2);
+            stars.Add(star3);
 
             // Act
-            DataRefresh.FullRefresh(systems);
+            DataRefresh.InsertUpdateStars(stars);
 
             // Assert
-            Assert.IsTrue(SelectSystemsCount() == 1 && SelectSystemsName(1) == "testSystemUpdated");
-            FullRefreshSingleDeleteSucceeds_MergeSingleWithDelete_OneRowDeleted();
+            Assert.IsTrue(SelectStarsName(2) == "testSystem2Updated" && SelectStarsName(4) == "testSystem4" && SelectStarsName(5) == "testSystem5");
+            DeleteStarsMultipleDeleteSucceeds_DeleteMultipleStars_TwoRowDeleted();
         }
 
         [TestMethod]
-        public void FullRefreshSingleDeleteSucceeds_MergeSingleWithDelete_OneRowDeleted()
+        public void DeleteStarsMultipleDeleteSucceeds_DeleteMultipleStars_TwoRowDeleted()
         {
             // Arrange
-            systems.Clear();
-
-            // Act
-            DataRefresh.FullRefresh(systems);
-
-            // Assert
-            Assert.IsTrue(SelectSystemsCount() == 0);
-            FullRefreshMultipleInsertSucceeds_MergeMultipleWithInsert_ThreeRowsInserted();
-        }
-
-        [TestMethod]
-        public void FullRefreshMultipleInsertSucceeds_MergeMultipleWithInsert_ThreeRowsInserted()
-        {
-            // Arrange
-            systems.Clear();
-            Tuple<string, double, double, double, DateTime> system1Details = new Tuple<string, double, double, double, DateTime>("testSystem1", 1.2, 1, 0.2, DateTime.Now);
-            Tuple<string, double, double, double, DateTime> system2Details = new Tuple<string, double, double, double, DateTime>("testSystem2", 1.2, 1, 0.2, DateTime.Now);
-            Tuple<string, double, double, double, DateTime> system3Details = new Tuple<string, double, double, double, DateTime>("testSystem3", 1.2, 1, 0.2, DateTime.Now);
-            systems.Add(1, system1Details);
-            systems.Add(2, system2Details);
-            systems.Add(3, system3Details);
-
-            // Act
-            DataRefresh.FullRefresh(systems);
-
-            // Assert
-            Assert.IsTrue(SelectSystemsCount() == 3);
-            FullRefreshMultipleUpdateSucceeds_MergeMultipleWithUpdate_TwoRowsUpdatedOneStaysTheSame();
-        }
-
-        [TestMethod]
-        public void FullRefreshMultipleUpdateSucceeds_MergeMultipleWithUpdate_TwoRowsUpdatedOneStaysTheSame()
-        {
-            // Arrange
-            systems.Clear();
-            Tuple<string, double, double, double, DateTime> system1Details = new Tuple<string, double, double, double, DateTime>("testSystem1Updated", 1.2, 1, 0.2, DateTime.Now);
-            Tuple<string, double, double, double, DateTime> system2Details = new Tuple<string, double, double, double, DateTime>("testSystem2Updated", 1.2, 1, 0.2, DateTime.Now);
-            Tuple<string, double, double, double, DateTime> system3Details = new Tuple<string, double, double, double, DateTime>("testSystem3", 1.2, 1, 0.2, DateTime.Now);
-            systems.Add(1, system1Details);
-            systems.Add(2, system2Details);
-            systems.Add(3, system3Details);
-
-            // Act
-            DataRefresh.FullRefresh(systems);
-
-            // Assert
-            Assert.IsTrue(SelectSystemsCount() == 3 && SelectSystemsName(1) == "testSystem1Updated" && SelectSystemsName(2) == "testSystem2Updated" && SelectSystemsName(3) == "testSystem3");
-            FullRefreshMultipleDeleteSucceeds_MergeMultipleWithDelete_TwoRowsDeletedOneStays();
-        }
-
-        [TestMethod]
-        public void FullRefreshMultipleDeleteSucceeds_MergeMultipleWithDelete_TwoRowsDeletedOneStays()
-        {
-            // Arrange
-            systems.Clear();
-            Tuple<string, double, double, double, DateTime> system2Details = new Tuple<string, double, double, double, DateTime>("testSystem2Updated", 1.2, 1, 0.2, DateTime.Now);
-            systems.Add(2, system2Details);
-
-            // Act
-            DataRefresh.FullRefresh(systems);
-            
-            // Assert
-            Assert.IsTrue(SelectSystemsCount() == 1 && SelectSystemsName(2) == "testSystem2Updated");
-            InsertUpdateInsertTwoUpdateOne_UpdateSystemAndAddNewSystems_TwoRowsAddedOneUpdated();
-        }
-
-        [TestMethod]
-        public void InsertUpdateInsertTwoUpdateOne_UpdateSystemAndAddNewSystems_TwoRowsAddedOneUpdated()
-        {
-            // Arrange
-            systems.Clear();
-            Tuple<string, double, double, double, DateTime> system2Details = new Tuple<string, double, double, double, DateTime>("testSystem2UpdatedAgain", 1.2, 1, 0.2, DateTime.Now);
-            Tuple<string, double, double, double, DateTime> system4Details = new Tuple<string, double, double, double, DateTime>("testSystem4", 1.2, 1, 0.2, DateTime.Now);
-            Tuple<string, double, double, double, DateTime> system5Details = new Tuple<string, double, double, double, DateTime>("testSystem5", 1.2, 1, 0.2, DateTime.Now);
-            systems.Add(2, system2Details);
-            systems.Add(4, system4Details);
-            systems.Add(5, system5Details);
-
-            // Act
-            DataRefresh.InsertUpdateStars(systems);
-
-            // Assert
-            Console.WriteLine(SelectSystemsCount());
-            Console.WriteLine(SelectSystemsName(2));
-            Assert.IsTrue(SelectSystemsCount() == 3 && SelectSystemsName(2) == "testSystem2UpdatedAgain");
-            DeleteSystemsMultipleDeleteSucceeds_DeleteMultipleSystems_TwoRowDeleted();
-        }
-
-        [TestMethod]
-        public void DeleteSystemsMultipleDeleteSucceeds_DeleteMultipleSystems_TwoRowDeleted()
-        {
-            // Arrange
-            systems.Clear();
             List<int> ids = new List<int>();
             ids.Add(5);
             ids.Add(4);
@@ -168,10 +114,10 @@ namespace EDUS_Unit_Test
             DataRefresh.DeleteStars(ids);
 
             // Assert
-            Assert.IsTrue(SelectSystemsCount() == 0);
+            Assert.IsTrue(SelectStarsName(2) == "" && SelectStarsName(4) == "" && SelectStarsName(5) == "");
         }
 
-        public static int? SelectSystemsCount()
+        public static int? SelectStarsCount()
         {
             // Open connection to DB
             SqlConnection con = DataRefresh.GetConnection();
@@ -191,7 +137,7 @@ namespace EDUS_Unit_Test
             return result;
         }
 
-        public static string SelectSystemsName(int id)
+        public static string SelectStarsName(int id)
         {
             // Open connection to DB
             SqlConnection con = DataRefresh.GetConnection();
