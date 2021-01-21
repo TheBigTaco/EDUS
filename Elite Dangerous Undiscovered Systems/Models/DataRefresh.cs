@@ -10,27 +10,16 @@ namespace EDUS.Models
     public class DataRefresh
     {
         // Fun super unsafe connection string that I'll make dynamic with env variables later
-        static private string connectionString = "Data Source=THEMASSIVETACO;Initial Catalog=Elite_Dangerous;Integrated Security=True";
+        readonly static private string connectionString = "Data Source=THEMASSIVETACO;Initial Catalog=Elite_Dangerous;Integrated Security=True";
 
-        public static void BulkRefresh(List<Star> stars)
+        public static void BulkRefresh(DataTable dt)
         {
-            DataTable dt = new DataTable();
-            foreach (Star star in stars)
+            using SqlConnection con = GetConnection();
+
+            using SqlBulkCopy bulkCopy = new SqlBulkCopy(con)
             {
-                DataRow dr = dt.NewRow();
-                dr["id"] = star.id;
-                dr["name"] = star.name;
-                dr["x_coor"] = star.coords["x"];
-                dr["y_coor"] = star.coords["y"];
-                dr["z_coor"] = star.coords[""];
-                dr["date_discovered"] = star.date;
-
-                dt.Rows.Add(dr);
-            }
-
-            SqlConnection con = GetConnection();
-            SqlBulkCopy bulkCopy = new SqlBulkCopy(con);
-            bulkCopy.DestinationTableName = "Discovered_Systems";
+                DestinationTableName = "Discovered_Systems"
+            };
             ExecuteQuery("USE Elite_Dangerous; Truncate Table Discovered_Systems;");
 
             bulkCopy.ColumnMappings.Add("id", "id");
@@ -119,7 +108,7 @@ VALUES ";
                 foreach (Star star in stars)
                 {
                     // Add in values for every system
-                    stagingInsertStatement += @$"({star.id}, '{star.name}', {star.coords["x"]}, {star.coords["y"]}, {star.coords["z"]}, '{star.date}'),";
+                    stagingInsertStatement += @$"({star.Id}, '{star.Name}', {star.Coords["x"]}, {star.Coords["y"]}, {star.Coords["z"]}, '{star.Date}'),";
                 }
                 // Remove trailing comma on final value set
                 stagingInsertStatement = stagingInsertStatement.Remove(stagingInsertStatement.Length - 1);
@@ -141,6 +130,7 @@ VALUES ";
                 con.Open();
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.ExecuteNonQuery();
+                cmd.Dispose();
             }
             finally
             {

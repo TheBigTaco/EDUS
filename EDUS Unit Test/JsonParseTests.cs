@@ -20,7 +20,7 @@ namespace EDUS_Unit_Test
             stars = JsonParse.DeserializeJsonStars(fileName);
 
             // Assert
-            Assert.IsTrue(stars[0].id == 1 && stars[1].id == 2312);
+            Assert.IsTrue(stars[0].Id == 1 && stars[1].Id == 2312);
         }
 
         [TestMethod]
@@ -34,9 +34,7 @@ namespace EDUS_Unit_Test
 
             // Assert
             Assert.IsTrue(DataRefreshTests.SelectStarsName(1) == "testSystem" && DataRefreshTests.SelectStarsName(2312) == "testSystem2");
-            List<int> ids = new List<int>();
-            ids.Add(1);
-            ids.Add(2312);
+            List<int> ids = new List<int> { 1, 2312 };
             DataRefresh.DeleteStars(ids);
         }
 
@@ -44,19 +42,17 @@ namespace EDUS_Unit_Test
         public void JsonFullRefresh_FullStarRefreshRequired_UploadAllSixtyMillionRecords()
         {
             // Arrange
-            //string fileName = "systemsWithCoordinates_test.json";
-            string fileName = "systemsWithCoordinates.json";
+            string fileName = "systemsWithCoordinates_test.json";
+            //string fileName = "systemsWithCoordinates.json";
 
             // Act
             JsonParse.LoadAllStarsFromJson(fileName);
 
             // Assert
-            Assert.IsTrue(DataRefreshTests.SelectStarsCount() > 50000000);
-            //Assert.IsTrue(DataRefreshTests.SelectStarsName(1) == "testSystem" && DataRefreshTests.SelectStarsName(2312) == "testSystem2");
-            //List<int> ids = new List<int>();
-            //ids.Add(1);
-            //ids.Add(2312);
-            //DataRefresh.DeleteStars(ids);
+            //Assert.IsTrue(DataRefreshTests.SelectStarsCount() > 50000000);
+            Assert.IsTrue(DataRefreshTests.SelectStarsName(1) == "testSystem" && DataRefreshTests.SelectStarsName(2312) == "testSystem2");
+            List<int> ids = new List<int> { 1, 2312 };
+            DataRefresh.DeleteStars(ids);
         }
     }
 }

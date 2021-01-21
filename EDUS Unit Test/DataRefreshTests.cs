@@ -34,15 +34,9 @@ namespace EDUS_Unit_Test
         {
             // Arrange
             List<Star> stars = new List<Star>();
-            Star star1 = new Star();
-            star1.id = 2;
-            star1.name = "testSystem2";
-            Dictionary<string, double> coords = new Dictionary<string, double>();
-            coords.Add("x", 1.2);
-            coords.Add("y", 1);
-            coords.Add("z", 0.2);
-            star1.coords = coords;
-            star1.date = DateTime.Now;
+
+            Star star1 = new Star(2, null, "testSystem2", new Dictionary<string, double>{
+                { "x", 1.2 }, { "y", 1 }, { "z", 0.2 } }, DateTime.Now);
 
             stars.Add(star1);
 
@@ -59,35 +53,14 @@ namespace EDUS_Unit_Test
         {
             // Arrange
             List<Star> stars = new List<Star>();
-            Star star1 = new Star();
-            star1.id = 2;
-            star1.name = "testSystem2Updated";
-            Dictionary<string, double> coords = new Dictionary<string, double>();
-            coords.Add("x", 1.2);
-            coords.Add("y", 1);
-            coords.Add("z", 0.2);
-            star1.coords = coords;
-            star1.date = DateTime.Now;
+            Star star1 = new Star(2, null, "testSystem2Updated", new Dictionary<string, double>{
+                { "x", 1.2 }, { "y", 1 }, { "z", 0.2 } }, DateTime.Now);
 
-            Star star2 = new Star();
-            star2.id = 4;
-            star2.name = "testSystem4";
-            Dictionary<string, double> coords2 = new Dictionary<string, double>();
-            coords2.Add("x", 1.2);
-            coords2.Add("y", 1);
-            coords2.Add("z", 0.2);
-            star2.coords = coords;
-            star2.date = DateTime.Now;
+            Star star2 = new Star(4, null, "testSystem4", new Dictionary<string, double>{
+                { "x", 1.2 }, { "y", 1 }, { "z", 0.2 } }, DateTime.Now);
 
-            Star star3 = new Star();
-            star3.id = 5;
-            star3.name = "testSystem5";
-            Dictionary<string, double> coords3 = new Dictionary<string, double>();
-            coords3.Add("x", 1.2);
-            coords3.Add("y", 1);
-            coords3.Add("z", 0.2);
-            star3.coords = coords;
-            star3.date = DateTime.Now;
+            Star star3 = new Star(5, null, "testSystem5", new Dictionary<string, double>{
+                { "x", 1.2 }, { "y", 1 }, { "z", 0.2 } }, DateTime.Now);
 
             stars.Add(star1);
             stars.Add(star2);
@@ -105,10 +78,7 @@ namespace EDUS_Unit_Test
         public void DeleteStarsMultipleDeleteSucceeds_DeleteMultipleStars_TwoRowDeleted()
         {
             // Arrange
-            List<int> ids = new List<int>();
-            ids.Add(5);
-            ids.Add(4);
-            ids.Add(2);
+            List<int> ids = new List<int> { 5, 4, 2 };
 
             // Act
             DataRefresh.DeleteStars(ids);
@@ -124,7 +94,7 @@ namespace EDUS_Unit_Test
             con.Open();
 
             // Execute staging insert command
-            SqlCommand sqlCommand = new SqlCommand("select COUNT(*) from discovered_systems", con);
+            using SqlCommand sqlCommand = new SqlCommand("select COUNT(*) from discovered_systems", con);
             SqlDataReader reader = sqlCommand.ExecuteReader();
 
             int? result = null;
@@ -144,7 +114,7 @@ namespace EDUS_Unit_Test
             con.Open();
 
             // Execute staging insert command
-            SqlCommand sqlCommand = new SqlCommand($"select name from discovered_systems where id = {id}", con);
+            using SqlCommand sqlCommand = new SqlCommand($"select name from discovered_systems where id = {id}", con);
             SqlDataReader reader = sqlCommand.ExecuteReader();
 
             string result = "";
