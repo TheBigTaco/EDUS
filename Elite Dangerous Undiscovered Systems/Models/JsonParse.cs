@@ -15,17 +15,7 @@ namespace EDUS.Models
         /// <param name="fileName">string of filename of stars to be deserialized</param>
         public static void LoadAllStarsFromJson(string fileName)
         {
-            List<Star> stars = DeserializeJsonStars(fileName);
-            List<Star> starsSplit = new List<Star>();
-            for (var i = 0; i < stars.Count(); i++)
-            {
-                starsSplit.Add(stars[i]);
-                if (i % 1000 == 0 || i + 1 == stars.Count())
-                {
-                    DataRefresh.InsertUpdateStars(starsSplit);
-                    starsSplit.Clear();
-                }
-            }
+            DataRefresh.BulkRefresh(DeserializeJsonStars(fileName));
         }
 
         /// <summary>
@@ -45,11 +35,19 @@ namespace EDUS.Models
         public static List<Star> DeserializeJsonStars(string fileName)
         {
             string fileLocation = "C:\\Users\\Adam\\source\\repos\\Elite Dangerous Undiscovered Systems\\Elite Dangerous Undiscovered Systems\\NightlyDumps\\";
-
+            string line;
             List<Star> stars = new List<Star>();
             using (StreamReader file = File.OpenText(fileLocation + fileName))
             {
-                stars = JsonConvert.DeserializeObject<List<Star>>(file.ReadToEnd());
+                while((line = file.ReadLine()) != null)
+                {
+                    if(!line.Contains("[") && !line.Contains("]"))
+                    {
+                        Star star = JsonConvert.DeserializeObject<Star>(line.TrimEnd(','));
+                        stars.Add(star);
+                    }
+                }
+                
             }
 
             return stars;
@@ -59,7 +57,7 @@ namespace EDUS.Models
     public class Star
     {
         public int id { get; set; }
-        public int id64 { get; set; }
+        public Int64? id64 { get; set; }
         public string name { get; set; }
         public Dictionary<string,double> coords { get; set; }
         public DateTime date { get; set; }

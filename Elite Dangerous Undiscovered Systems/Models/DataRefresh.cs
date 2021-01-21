@@ -12,10 +12,48 @@ namespace EDUS.Models
         // Fun super unsafe connection string that I'll make dynamic with env variables later
         static private string connectionString = "Data Source=THEMASSIVETACO;Initial Catalog=Elite_Dangerous;Integrated Security=True";
 
+        public static void BulkRefresh(List<Star> stars)
+        {
+            DataTable dt = new DataTable();
+            foreach (Star star in stars)
+            {
+                DataRow dr = dt.NewRow();
+                dr["id"] = star.id;
+                dr["name"] = star.name;
+                dr["x_coor"] = star.coords["x"];
+                dr["y_coor"] = star.coords["y"];
+                dr["z_coor"] = star.coords[""];
+                dr["date_discovered"] = star.date;
+
+                dt.Rows.Add(dr);
+            }
+
+            SqlConnection con = GetConnection();
+            SqlBulkCopy bulkCopy = new SqlBulkCopy(con);
+            bulkCopy.DestinationTableName = "Discovered_Systems";
+            ExecuteQuery("USE Elite_Dangerous; Truncate Table Discovered_Systems;");
+
+            bulkCopy.ColumnMappings.Add("id", "id");
+            bulkCopy.ColumnMappings.Add("name", "name");
+            bulkCopy.ColumnMappings.Add("x_coor", "x_coor");
+            bulkCopy.ColumnMappings.Add("y_coor", "y_coor");
+            bulkCopy.ColumnMappings.Add("z_coor", "z_coor");
+            bulkCopy.ColumnMappings.Add("date_discovered", "date_discovered");
+            try
+            {
+                con.Open();
+                bulkCopy.WriteToServer(dt);
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+
         /// <summary>
-        /// Insert and update for nightly dumps of new stars or for full refresh.
+        /// Insert and update for nightly dumps of new stars.
         /// </summary>
-        /// <param name="stars">List<Star> to be inserted or updated</Star></param>
+        /// <param name="stars">List of Star to be inserted or updated</Star></param>
         public static void InsertUpdateStars(List<Star> stars)
         {
 
@@ -65,9 +103,9 @@ TRUNCATE TABLE Discovered_Systems_Staging;";
         }
 
         /// <summary>
-        /// Loop through dictionary to add stars into insert statement to be inserted into staging table
+        /// Loop through List of Star to add stars into insert statement to be inserted into staging table
         /// </summary>
-        /// <param name="stars">Dictionary of id, tuple keyvalue pair. Tuple contains name, coords, and date discovered.</param>
+        /// <param name="stars">List of Star</param>
         public static void InsertIntoStaging(List<Star> stars)
         {
             if (stars.Count() > 0)
