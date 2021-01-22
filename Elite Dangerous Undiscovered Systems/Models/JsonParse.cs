@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -70,6 +71,9 @@ namespace EDUS.Models
             dt.Columns.Add("y_coor");
             dt.Columns.Add("z_coor");
             dt.Columns.Add("date_discovered");
+
+            DataRefresh.ExecuteQuery("USE Elite_Dangerous; Truncate Table Discovered_Systems;");
+
             using (StreamReader file = File.OpenText(fileLocation + fileName))
             {
                 while ((line = file.ReadLine()) != null)
@@ -85,6 +89,12 @@ namespace EDUS.Models
                         dr["z_coor"] = star.Coords["z"];
                         dr["date_discovered"] = star.Date;
                         dt.Rows.Add(dr);
+                        if(dt.Rows.Count == 1000000)
+                        {
+                            DataRefresh.BulkRefresh(dt);
+                            dt.Rows.Clear();
+                            Thread.Sleep(60000);
+                        }
                     }
                 }
 

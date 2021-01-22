@@ -38,21 +38,21 @@ namespace EDUS_Unit_Test
             DataRefresh.DeleteStars(ids);
         }
 
-        [TestMethod]
-        public void JsonFullRefresh_FullStarRefreshRequired_UploadAllSixtyMillionRecords()
-        {
-            // Arrange
-            string fileName = "systemsWithCoordinates_test.json";
-            //string fileName = "systemsWithCoordinates.json";
+        //[TestMethod]
+        //public void JsonFullRefresh_FullStarRefreshRequired_UploadAllSixtyMillionRecords()
+        //{
+        //    // Arrange
+        //    //string fileName = "systemsWithCoordinates_test.json";
+        //    string fileName = "systemsWithCoordinates.json";
 
-            // Act
-            JsonParse.LoadAllStarsFromJson(fileName);
+        //    // Act
+        //    JsonParse.LoadAllStarsFromJson(fileName);
 
-            // Assert
-            //Assert.IsTrue(DataRefreshTests.SelectStarsCount() > 50000000);
-            Assert.IsTrue(DataRefreshTests.SelectStarsName(1) == "testSystem" && DataRefreshTests.SelectStarsName(2312) == "testSystem2");
-            List<int> ids = new List<int> { 1, 2312 };
-            DataRefresh.DeleteStars(ids);
-        }
+        //    // Assert
+        //    Assert.IsTrue(DataRefreshTests.SelectStarsCount() > 50000000);
+        //    //Assert.IsTrue(DataRefreshTests.SelectStarsName(1) == "testSystem" && DataRefreshTests.SelectStarsName(2312) == "testSystem2");
+        //    //List<int> ids = new List<int> { 1, 2312 };
+        //    //DataRefresh.DeleteStars(ids);
+        //}
     }
 }

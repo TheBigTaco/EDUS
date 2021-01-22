@@ -10,7 +10,7 @@ namespace EDUS.Models
     public class DataRefresh
     {
         // Fun super unsafe connection string that I'll make dynamic with env variables later
-        readonly static private string connectionString = "Data Source=THEMASSIVETACO;Initial Catalog=Elite_Dangerous;Integrated Security=True";
+        readonly static private string connectionString = "Data Source=THEMASSIVETACO;Initial Catalog=Elite_Dangerous;Integrated Security=True;MultipleActiveResultSets=True;";
 
         public static void BulkRefresh(DataTable dt)
         {
@@ -18,9 +18,9 @@ namespace EDUS.Models
 
             using SqlBulkCopy bulkCopy = new SqlBulkCopy(con)
             {
-                DestinationTableName = "Discovered_Systems"
+                DestinationTableName = "Discovered_Systems",
+                BulkCopyTimeout = 0
             };
-            ExecuteQuery("USE Elite_Dangerous; Truncate Table Discovered_Systems;");
 
             bulkCopy.ColumnMappings.Add("id", "id");
             bulkCopy.ColumnMappings.Add("name", "name");
