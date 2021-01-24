@@ -7,72 +7,171 @@ namespace EDUS.Models
 {
     public class NeuralNetwork
     {
-        public double CalculateDistance(Star currentStar, Star otherStar)
+        private int[] layer;
+        private Layer[] layers;
+        public NeuralNetwork(int[] layer)
         {
-            double distance = Math.Sqrt(Math.Pow(otherStar.Coords["x"] - currentStar.Coords["x"], 2) + Math.Pow(otherStar.Coords["y"] - currentStar.Coords["y"], 2) + Math.Pow(otherStar.Coords["z"] - currentStar.Coords["z"], 2));
-
-            return distance;
-        }
-
-        public Dictionary<string, double> CalculateMinMaxCoords(Star star, double distance)
-        {
-            Dictionary<string, double> minMaxCoords = new Dictionary<string, double>
+            this.layer = new int[layer.Length];
+            for (int i = 0; i < layer.Length; i++)
             {
-                { "minX", star.Coords["x"] - distance},
-                { "maxX", star.Coords["x"] + distance},
-                { "minY", star.Coords["y"] - distance},
-                { "maxY", star.Coords["y"] + distance},
-                { "minZ", star.Coords["z"] - distance},
-                { "maxZ", star.Coords["z"] + distance}
-            };
-
-            return minMaxCoords;
-        }
-
-        public Dictionary<int, Tuple<double, double, double>> PartitionCube(int amountOfCubes, Dictionary<string, double> minMaxCoordinates)
-        {
-            double xSplitLength = Math.Abs(minMaxCoordinates["maxX"] - minMaxCoordinates["minX"]) / Math.Pow(amountOfCubes, (double)1 / 3);
-            double ySplitLength = Math.Abs(minMaxCoordinates["maxY"] - minMaxCoordinates["minY"]) / Math.Pow(amountOfCubes, (double)1 / 3);
-            double zSplitLength = Math.Abs(minMaxCoordinates["maxZ"] - minMaxCoordinates["minZ"]) / Math.Pow(amountOfCubes, (double)1 / 3);
-
-            Dictionary<int, double> newCubeXLimits = new Dictionary<int, double>
-            {
-                { 0, minMaxCoordinates["minX"] }
-            };
-            Dictionary<int, double> newCubeYLimits = new Dictionary<int, double>
-            {
-                { 0, minMaxCoordinates["minY"] }
-            };
-            Dictionary<int, double> newCubeZLimits = new Dictionary<int, double>
-            {
-                { 0, minMaxCoordinates["minZ"] }
-            };
-
-            for(var i = 0; i < Math.Pow(amountOfCubes, (double)1 / 3); i++)
-            {
-                newCubeXLimits.Add(i + 1, newCubeXLimits[i] + xSplitLength);
-                newCubeYLimits.Add(i + 1, newCubeYLimits[i] + ySplitLength);
-                newCubeZLimits.Add(i + 1, newCubeZLimits[i] + zSplitLength);
+                this.layer[i] = layer[i];
             }
 
-            Dictionary<int, Tuple<double, double, double>> newCubes = new Dictionary<int, Tuple<double, double, double>>();
+            layers = new Layer[layer.Length - 1];
 
-            int counter = 0;
-
-            for(var i = 0; i < newCubeXLimits.Count(); i++)
+            for (int i = 0; i < layers.Length; i++)
             {
-                for (var d = 0; d < newCubeYLimits.Count(); d++)
+                layers[i] = new Layer(layer[i], layer[i + 1]);
+            }
+        }
+
+        public float[] FeedForward(float[] inputs)
+        {
+            layers[0].FeedForward(inputs);
+            for (int i = 1; i < layers.Length; i++)
+            {
+                layers[i].FeedForward(layers[i - 1].outputs);
+            }
+
+            return layers[layers.Length - 1].outputs;
+        }
+
+        public void BackProp(float[] expected)
+        {
+            for (int i = layers.Length - 1; i >= 0; i--)
+            {
+                if(i == layers.Length - 1)
                 {
-                    for (var k = 0; k < newCubeZLimits.Count(); k++)
+                    layers[i].BackPropOutput(expected);
+                }
+                else
+                {
+                    layers[i].BackPropHidden(layers[i + 1].gamma, layers[i + 1].weights);
+                }
+            }
+
+            for (int i = 0; i < layers.Length; i++)
+            {
+                layers[i].UpdateWeights();
+            }
+        }
+
+        public class Layer
+        {
+            int numberOfInputs;
+            int numberOfOutputs;
+
+            public float[] outputs;
+            public float[] inputs;
+            public float[,] weights;
+            public float[,] weightsDelta;
+            public float[] gamma;
+            public float[] error;
+
+            public static Random random = new Random();
+            readonly float learningRate = 0.00333f;
+            public Layer(int numberOfInputs, int numberOfOutputs)
+            {
+                this.numberOfInputs = numberOfInputs;
+                this.numberOfOutputs = numberOfOutputs;
+
+                outputs = new float[numberOfOutputs];
+                inputs = new float[numberOfInputs];
+                weights = new float[numberOfOutputs, numberOfInputs];
+                weightsDelta = new float[numberOfOutputs, numberOfInputs];
+                gamma = new float[numberOfOutputs];
+                error = new float[numberOfOutputs];
+
+                InitializeWeights();
+            }
+            public void InitializeWeights()
+            {
+                for (int i = 0; i < numberOfOutputs; i++)
+                {
+                    for (int d = 0; d < numberOfInputs; d++)
                     {
-                        Tuple<double, double, double> newCoords = Tuple.Create(newCubeXLimits[i], newCubeYLimits[d], newCubeZLimits[k]);
-                        newCubes.Add(counter, newCoords);
-                        counter++;
+                        weights[i, d] = (float)random.NextDouble() - 0.5f;
                     }
                 }
             }
 
-            return newCubes;
+            public float[] FeedForward(float[] inputs)
+            {
+                this.inputs = inputs;
+
+                for (int i = 0; i < numberOfOutputs; i++)
+                {
+                    outputs[i] = 0;
+                    for (int d = 0; d < numberOfInputs; d++)
+                    {
+                        outputs[i] += inputs[d] * weights[i, d];
+                    }
+
+                    outputs[i] = (float)Math.Tanh(outputs[i]);
+                }
+
+                return outputs;
+            }
+
+            public float TanHDer(float value)
+            {
+                return 1 - (value * value);
+            }
+
+            public void BackPropOutput(float[] expected)
+            {
+                for (int i = 0; i < numberOfOutputs; i++)
+                {
+                    error[i] = outputs[i] - expected[i];
+                }
+
+                for (int i = 0; i < numberOfOutputs; i++)
+                {
+                    gamma[i] = error[i] * TanHDer(outputs[i]);
+                }
+
+                for (int i = 0; i < numberOfOutputs; i++)
+                {
+                    for (int d = 0; d < numberOfInputs; d++)
+                    {
+                        weightsDelta[i, d] = gamma[i] * inputs[d];
+                    }
+                }
+            }
+
+            public void BackPropHidden(float[] gammaForward, float[,] weightsForward)
+            {
+                for (int i = 0; i < numberOfOutputs; i++)
+                {
+                    gamma[i] = 0;
+
+                    for (int d = 0; d < gammaForward.Length; d++)
+                    {
+                        gamma[i] += gammaForward[d] * weightsForward[d, i];
+                    }
+
+                    gamma[i] *= TanHDer(outputs[i]);
+                }
+
+                for (int i = 0; i < numberOfOutputs; i++)
+                {
+                    for (int d = 0; d < numberOfInputs; d++)
+                    {
+                        weightsDelta[i, d] = gamma[i] * inputs[d];
+                    }
+                }
+            }
+
+            public void UpdateWeights()
+            {
+                for (int i = 0; i < numberOfOutputs; i++)
+                {
+                    for (int d = 0; d < numberOfInputs; d++)
+                    {
+                        weights[i, d] -= weightsDelta[i,d] * learningRate;
+                    }
+                }
+            }
         }
     }
 }
