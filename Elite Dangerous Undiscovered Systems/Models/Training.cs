@@ -10,10 +10,11 @@ namespace EDUS.Models
         // How many stars it should loop through for training data.
         // TODO: Make a method to get count of stars in database and set loops to it multiplied by X
         Int64 loops = 1000;
+        int cubes = 100;
         public void Train()
         {
 
-            NeuralNetwork net = new NeuralNetwork(new int[] { 104, 50, 50, 50, 3 });
+            NeuralNetwork net = new NeuralNetwork(new int[] { cubes + 4, 50, 50, 50, 3 });
 
             int currentId = 0;
 
@@ -50,7 +51,7 @@ namespace EDUS.Models
                 List<Star> stars = GetStarsWithinDistance(star, minMax);
 
                 // Partition cube into 100 mini cubes
-                Dictionary<int, Tuple<double, double, double>> miniCubes = PartitionCube(100, minMax);
+                Dictionary<int, Tuple<double, double, double>> miniCubes = PartitionCube(cubes, minMax);
 
                 // Count how many stars are in each partitioned mini cube and add to list of star counts.
                 Dictionary<int, float> starCounts = new Dictionary<int, float>();
@@ -80,8 +81,20 @@ namespace EDUS.Models
                 float normalizedZ = (float)((star.Coords["z"] + 11000) / 20000);
                 float normalizedDistance = (float)((distance + 0.1) / 79.9);
 
+                // Creat input array
+                float[] inputs = new float[104];
+
+                inputs[0] = normalizedX;
+                inputs[1] = normalizedY;
+                inputs[2] = normalizedZ;
+                inputs[3] = normalizedDistance;
+                for(var i = 0; i < starCounts.Count(); i++)
+                {
+                    inputs[i + 4] = starCounts[i];
+                }
+
                 // Input normalized fields
-                net.FeedForward(new float[] { normalizedDistance, normalizedX, normalizedY, normalizedZ, starCounts[0] });
+                net.FeedForward(inputs);
 
                 // Normalize expected star coordinates
                 float normalizedExpectedX = (float)((expectedStar.Coords["x"] + 40000) / 80000);
