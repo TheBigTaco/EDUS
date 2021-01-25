@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -118,7 +117,7 @@ VALUES ";
         }
 
         /// <summary>
-        /// Execute SQL Query. No idea if this is a good way to do it, but it's what works.
+        /// Execute SQL Insert/Delete/Update Query. No idea if this is a good way to do it, but it's what works.
         /// </summary>
         /// <param name="query">String containing SQL query</param>
         public static void ExecuteQuery(string query)
