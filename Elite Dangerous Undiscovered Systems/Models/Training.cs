@@ -9,25 +9,35 @@ namespace EDUS.Models
     {
         // How many stars it should loop through for training data.
         // TODO: Make a method to get count of stars in database and set loops to it multiplied by X
-        Int64 loops = 1000;
-        int cubes = 100;
-        public void Train()
+        static readonly Int64 loops = 10000;
+        static readonly int cubes = 125;
+        static readonly int maxX = 40000;
+        static readonly int minX = -40000;
+        static readonly int maxY = 60000;
+        static readonly int minY = -10000;
+        static readonly int maxZ = 9000;
+        static readonly int minZ = -11000;
+        static readonly double maxDistance = 80;
+        static readonly double minDistance = 0.1;
+        static readonly int hiddenLayerCount = (int)Math.Ceiling((double)cubes / 2);
+        public static void Train()
         {
 
-            NeuralNetwork net = new NeuralNetwork(new int[] { cubes + 4, 50, 50, 50, 3 });
+            NeuralNetwork net = new NeuralNetwork(new int[] { cubes + 4, hiddenLayerCount, hiddenLayerCount, hiddenLayerCount, 3 });
 
-            int currentId = 0;
+            int? currentId = 0;
 
             for (var trainingLoop = 0; trainingLoop < loops; trainingLoop++)
             {
                 // Get a random distance between 0.1 and 80
-                double distance = new Random().NextDouble() * (80 - 0.1) + 0.1;
+                double distance = new Random().NextDouble() * (maxDistance - minDistance) + minDistance;
 
                 // Get the star to be used as the correct answer (expected) for the training data
-                Star expectedStar = GetCurrentStar(currentId);
+                currentId = GetCurrentStarId(currentId);
+                if (currentId == null) currentId = 0;
 
                 // Set the currentId to the current stars ID so we can select the next star on the next loop
-                currentId = expectedStar.Id;
+                Star expectedStar = GetCurrentStar(currentId);
 
                 // Get stars within distance around expected star to be used as center point of cube
                 List<Star> starsToChoose = GetStarsWithinDistance(expectedStar, CalculateMinMaxCoords(expectedStar, distance));
@@ -55,14 +65,14 @@ namespace EDUS.Models
 
                 // Count how many stars are in each partitioned mini cube and add to list of star counts.
                 Dictionary<int, float> starCounts = new Dictionary<int, float>();
-
-                for (var i = 0; i < miniCubes.Count(); i++)
+                
+                for (var i = 1; i < miniCubes.Count(); i++)
                 {
                     int count = 0;
 
                     foreach (Star s in stars)
                     {
-                        if (s.Coords["x"] < miniCubes[i + 1].Item1 && s.Coords["x"] >= miniCubes[i].Item1 && s.Coords["y"] < miniCubes[i + 1].Item2 && s.Coords["y"] >= miniCubes[i].Item2 && s.Coords["z"] < miniCubes[i + 1].Item3 && s.Coords["z"] >= miniCubes[i].Item3)
+                        if (s.Coords["x"] < miniCubes[i].Item1 && s.Coords["x"] >= miniCubes[i - 1].Item1 && s.Coords["y"] < miniCubes[i].Item2 && s.Coords["y"] >= miniCubes[i - 1].Item2 && s.Coords["z"] < miniCubes[i].Item3 && s.Coords["z"] >= miniCubes[i - 1].Item3)
                         {
                             count++;
                             stars.Remove(s);
@@ -70,19 +80,20 @@ namespace EDUS.Models
                     }
 
                     // Normalize count to be between 0 and 1
-                    float normalizedCount = count / stars.Count();
+                    float normalizedCount = 0;
+                    if (stars.Count() != 0) normalizedCount = count / stars.Count();
 
-                    starCounts.Add(i, normalizedCount);
+                    starCounts.Add(i - 1, normalizedCount);
                 }
 
                 // Normalize center star coordinates and distance
-                float normalizedX = (float)((star.Coords["x"] + 40000) / 80000);
-                float normalizedY = (float)((star.Coords["y"] + 10000) / 70000);
-                float normalizedZ = (float)((star.Coords["z"] + 11000) / 20000);
+                float normalizedX = (float)((star.Coords["x"] - minX) / (maxX - minX));
+                float normalizedY = (float)((star.Coords["y"] - minY) / (maxY - minY));
+                float normalizedZ = (float)((star.Coords["z"] - minZ) / (maxZ - minZ));
                 float normalizedDistance = (float)((distance + 0.1) / 79.9);
 
                 // Creat input array
-                float[] inputs = new float[104];
+                float[] inputs = new float[cubes + 4];
 
                 inputs[0] = normalizedX;
                 inputs[1] = normalizedY;
@@ -94,19 +105,33 @@ namespace EDUS.Models
                 }
 
                 // Input normalized fields
-                net.FeedForward(inputs);
+                float[] output = net.FeedForward(inputs);
+
+                float outputX = output[0] * (maxX - minX) + minX;
+                float outputY = output[1] * (maxY - minY) + minY;
+                float outputZ = output[2] * (maxZ - minZ) + minZ;
 
                 // Normalize expected star coordinates
-                float normalizedExpectedX = (float)((expectedStar.Coords["x"] + 40000) / 80000);
-                float normalizedExpectedY = (float)((expectedStar.Coords["y"] + 10000) / 70000);
-                float normalizedExpectedZ = (float)((expectedStar.Coords["z"] + 11000) / 20000);
+                float normalizedExpectedX = (float)((expectedStar.Coords["x"] - minX) / (maxX - minX));
+                float normalizedExpectedY = (float)((expectedStar.Coords["y"] - minY) / (maxY - minY));
+                float normalizedExpectedZ = (float)((expectedStar.Coords["z"] - minZ) / (maxZ - minZ));
+
+                float xAccuracy = (1 - (Math.Abs(normalizedExpectedX - output[0]) / 100)) * 100;
+                float yAccuracy = (1 - (Math.Abs(normalizedExpectedY - output[1]) / 100)) * 100;
+                float zAccuracy = (1 - (Math.Abs(normalizedExpectedZ - output[2]) / 100)) * 100;
+
+                Console.WriteLine(@$"
+Output X: {outputX} Expected X: {expectedStar.Coords["x"]} X Accuracy: {xAccuracy}
+Output Y: {outputY} Expected Y: {expectedStar.Coords["y"]} Y Accuracy: {yAccuracy}
+Output Z: {outputZ} Expected Z: {expectedStar.Coords["z"]} Z Accuracy: {zAccuracy}
+");
 
                 // Back propogate expected stars normalized coordinates
                 net.BackProp(new float[] { normalizedExpectedX, normalizedExpectedY, normalizedExpectedZ });
             }
         }
 
-        public Star GetCurrentStar(int id)
+        public static int? GetCurrentStarId(int? id)
         {
             string query1 = $@"
 select Min(id)
@@ -114,13 +139,6 @@ from Discovered_Systems
 where id > {id}";
 
             int? nextId = null;
-
-            string query2 = $@"
-select *
-from Discovered_Systems
-where id = {nextId}";
-
-            Star star = null;
 
             SqlConnection con = DataRefresh.GetConnection();
 
@@ -144,20 +162,42 @@ where id = {nextId}";
                 }
 
                 cmd.Dispose();
+            }
+            finally
+            {
+                con.Close();
+            }
 
-                if (nextId != null)
+            return nextId;
+        }
+
+        public static Star GetCurrentStar(int? id)
+        {
+            Star star = null;
+
+            SqlConnection con = DataRefresh.GetConnection();
+
+            string query = $@"
+select *
+from Discovered_Systems
+where id = {id}";
+
+            try
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand(query, con);
+                IAsyncResult result = cmd.BeginExecuteReader();
+
+                while (!result.IsCompleted)
                 {
-                    SqlCommand cmd2 = new SqlCommand(query2, con);
-                    IAsyncResult result2 = cmd.BeginExecuteReader();
+                    System.Threading.Thread.Sleep(100);
+                }
 
-                    while (!result2.IsCompleted)
+                using (SqlDataReader reader = cmd.EndExecuteReader(result))
+                {
+                    while (reader.Read())
                     {
-                        System.Threading.Thread.Sleep(100);
-                    }
-
-                    using (SqlDataReader reader = cmd.EndExecuteReader(result2))
-                    {
-                        while (reader.Read())
+                        if (reader.FieldCount == 6)
                         {
                             Dictionary<string, double> coords = new Dictionary<string, double>
                             {
@@ -168,9 +208,9 @@ where id = {nextId}";
                             star = new Star(reader.GetInt32(0), null, reader.GetString(1), coords, reader.GetDateTime(5));
                         }
                     }
-
-                    cmd2.Dispose();
                 }
+
+                cmd.Dispose();
             }
             finally
             {
@@ -180,7 +220,7 @@ where id = {nextId}";
             return star;
         }
 
-        public List<Star> GetStarsWithinDistance(Star star, Dictionary<string, double> minMax)
+        public static List<Star> GetStarsWithinDistance(Star star, Dictionary<string, double> minMax)
         {
             string query = $@"
 select *
@@ -188,7 +228,7 @@ from Discovered_Systems
 where x_coor between {minMax["minX"]} and {minMax["maxX"]}
 and y_coor between {minMax["minY"]} and {minMax["maxY"]}
 and z_coor between {minMax["minZ"]} and {minMax["maxZ"]}
-and discovered_date < {star.Date}
+and date_discovered < '{star.Date}'
 ";
 
             List<Star> stars = new List<Star>();
@@ -232,14 +272,14 @@ and discovered_date < {star.Date}
             return stars;
         }
 
-        public double CalculateDistance(Star currentStar, Star otherStar)
+        public static double CalculateDistance(Star currentStar, Star otherStar)
         {
             double distance = Math.Sqrt(Math.Pow(otherStar.Coords["x"] - currentStar.Coords["x"], 2) + Math.Pow(otherStar.Coords["y"] - currentStar.Coords["y"], 2) + Math.Pow(otherStar.Coords["z"] - currentStar.Coords["z"], 2));
 
             return distance;
         }
 
-        public Dictionary<string, double> CalculateMinMaxCoords(Star star, double distance)
+        public static Dictionary<string, double> CalculateMinMaxCoords(Star star, double distance)
         {
             Dictionary<string, double> minMaxCoords = new Dictionary<string, double>
             {
@@ -254,11 +294,13 @@ and discovered_date < {star.Date}
             return minMaxCoords;
         }
 
-        public Dictionary<int, Tuple<double, double, double>> PartitionCube(int amountOfCubes, Dictionary<string, double> minMaxCoordinates)
+        public static Dictionary<int, Tuple<double, double, double>> PartitionCube(int amountOfCubes, Dictionary<string, double> minMaxCoordinates)
         {
-            double xSplitLength = Math.Abs(minMaxCoordinates["maxX"] - minMaxCoordinates["minX"]) / Math.Pow(amountOfCubes, (double)1 / 3);
-            double ySplitLength = Math.Abs(minMaxCoordinates["maxY"] - minMaxCoordinates["minY"]) / Math.Pow(amountOfCubes, (double)1 / 3);
-            double zSplitLength = Math.Abs(minMaxCoordinates["maxZ"] - minMaxCoordinates["minZ"]) / Math.Pow(amountOfCubes, (double)1 / 3);
+            double cubeRoot = Math.Pow(amountOfCubes, 1.0 / 3.0);
+
+            double xSplitLength = Math.Abs(minMaxCoordinates["maxX"] - minMaxCoordinates["minX"]) / cubeRoot;
+            double ySplitLength = Math.Abs(minMaxCoordinates["maxY"] - minMaxCoordinates["minY"]) / cubeRoot;
+            double zSplitLength = Math.Abs(minMaxCoordinates["maxZ"] - minMaxCoordinates["minZ"]) / cubeRoot;
 
             Dictionary<int, double> newCubeXLimits = new Dictionary<int, double>
             {
@@ -273,11 +315,11 @@ and discovered_date < {star.Date}
                 { 0, minMaxCoordinates["minZ"] }
             };
 
-            for (var i = 0; i < Math.Pow(amountOfCubes, (double)1 / 3); i++)
+            for (var i = 1; i < cubeRoot; i++)
             {
-                newCubeXLimits.Add(i + 1, newCubeXLimits[i] + xSplitLength);
-                newCubeYLimits.Add(i + 1, newCubeYLimits[i] + ySplitLength);
-                newCubeZLimits.Add(i + 1, newCubeZLimits[i] + zSplitLength);
+                newCubeXLimits.Add(i, newCubeXLimits[i - 1] + xSplitLength);
+                newCubeYLimits.Add(i, newCubeYLimits[i - 1] + ySplitLength);
+                newCubeZLimits.Add(i, newCubeZLimits[i - 1] + zSplitLength);
             }
 
             Dictionary<int, Tuple<double, double, double>> newCubes = new Dictionary<int, Tuple<double, double, double>>();

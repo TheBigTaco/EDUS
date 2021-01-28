@@ -38,4 +38,3 @@ C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous 
 C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\NightlyDumps\systemsWithCoordinates_test.json
 C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\Newtonsoft.Json.dll
 C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\obj\Debug\netcoreapp3.0\Elite Dangerous Undiscovered Systems.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\Elite Dangerous Undiscovered Systems\bin\Debug\netcoreapp3.0\NightlyDumps\systemsWithCoordinates.json

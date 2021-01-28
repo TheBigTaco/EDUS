@@ -116,4 +116,3 @@ C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\EDUS Unit Test\b
 C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\EDUS Unit Test\bin\Debug\netcoreapp3.0\runtimes\win\lib\netcoreapp2.1\System.Security.Principal.Windows.dll
 C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\EDUS Unit Test\bin\Debug\netcoreapp3.0\runtimes\win\lib\netcoreapp2.0\System.Text.Encoding.CodePages.dll
 C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\EDUS Unit Test\bin\Debug\netcoreapp3.0\NightlyDumps\systemsWithCoordinates_test.json
-C:\Users\Adam\source\repos\Elite Dangerous Undiscovered Systems\EDUS Unit Test\bin\Debug\netcoreapp3.0\NightlyDumps\systemsWithCoordinates.json
